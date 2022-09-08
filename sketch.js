@@ -102,8 +102,8 @@ export let init = async ({ scene, width, height }) => {
       value: new THREE.TextureLoader().load(DISP_1),
     },
     resolution: { type: "v4", value: new THREE.Vector4() },
-    radius: { value: 0.2, type: "f", min: 0.1, max: 2 },
-    width: { value: 0.5, type: "f", min: 0, max: 1 },
+    radius: { value: 0.8, type: "f", min: 0.1, max: 2 },
+    width: { value: 0.95, type: "f", min: 0, max: 1 },
   };
 
   mesh1 = new THREE.Mesh(
@@ -130,7 +130,7 @@ export let init = async ({ scene, width, height }) => {
 
     new TWEEN.Tween(mesh1.material.uniforms.progress)
       .to({ value: 1 }, 3200)
-      .easing(TWEEN.Easing.Cubic.Out)
+      .easing(TWEEN.Easing.Exponential.InOut)
       .onComplete(() => {
         current = (current + 1) % len;
         mesh1.material.uniforms.texture1.value = nextTexture;
