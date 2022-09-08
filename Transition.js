@@ -4,7 +4,7 @@ import { TWEEN } from "three/examples/jsm/libs/tween.module.min";
 const transitionParams = {
   transition: 0,
   animateTransition: true,
-  textureThreshold: 3.2,
+  textureThreshold: 0.0032,
 };
 
 const vertexShader = `
@@ -105,7 +105,7 @@ export default class Transition {
     this.mesh.material.uniforms.tDiffuse2.value = sceneB.fbo.texture;
 
     new TWEEN.Tween(transitionParams)
-      .to({ transition: 1 }, 3200)
+      .to({ transition: 1 }, this.texture.source.data.duration * 1000)
       .repeat(Infinity)
       .yoyo(true)
       .start();

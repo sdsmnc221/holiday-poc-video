@@ -2,7 +2,7 @@ import * as THREE from "three";
 import * as load from "load-asset";
 import VID_0 from "./assets/xp-0.mp4";
 import VID_1 from "./assets/xp-1.mp4";
-import DISP_1 from "./assets/disp3.jpeg";
+import DISP_1 from "./assets/deku.mp4";
 import Scene from "./Scene";
 import Transition from "./Transition";
 
@@ -21,10 +21,20 @@ export let init = async ({ renderer, scene, width, height }) => {
   camera.position.z = 1000;
   camera.lookAt(new THREE.Vector3());
 
-  disp = new THREE.TextureLoader().load(DISP_1);
+  //   disp = new THREE.TextureLoader().load(DISP_1);
+  disp = await load(DISP_1);
+  app.appendChild(disp);
+  disp.autoplay = true;
+  disp.loop = true;
+  disp.muted = true;
+  disp.playsinline = true;
+  disp.style = "display: none";
+  disp.play();
+  disp = new THREE.VideoTexture(disp);
+  disp.needsUpdate = true;
 
-  video0 = await load(VID_0);
-  video1 = await load(VID_1);
+  video0 = await load(VID_1);
+  video1 = await load(VID_0);
   app.appendChild(video0);
   app.appendChild(video1);
   video0.autoplay = true;
