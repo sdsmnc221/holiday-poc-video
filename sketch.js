@@ -2,7 +2,7 @@ import * as THREE from "three";
 import * as load from "load-asset";
 import VID_0 from "./assets/xp-0.mp4";
 import VID_1 from "./assets/xp-1.mp4";
-import DISP_1 from "./assets/disp2.jpeg";
+import DISP_1 from "./assets/disp3.jpeg";
 import Scene from "./Scene";
 import Transition from "./Transition";
 
