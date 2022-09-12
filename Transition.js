@@ -105,8 +105,8 @@ export default class Transition {
     this.mesh.material.uniforms.tDiffuse2.value = sceneB.fbo.texture;
 
     new TWEEN.Tween(transitionParams)
-      .to({ transition: 1 }, 3200)
-      .repeat(Infinity)
+      .to({ transition: 1 }, 640)
+      .repeat(1)
       .yoyo(true)
       .start();
 

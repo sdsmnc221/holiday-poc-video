@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 const vertexShader = `
     varying vec2 vUv;
@@ -32,11 +33,20 @@ const fragmentShader = `
 `;
 
 export default class Scene {
-  constructor(renderer, texture, width, height) {
+  constructor(
+    renderer,
+    texture,
+    model,
+    width,
+    height,
+    position,
+    scale,
+    rotation
+  ) {
     this.renderer = renderer;
 
     this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.1, 1000);
-    this.camera.position.z = 1000;
+    this.camera.position.z = 720;
     this.camera.lookAt(new THREE.Vector3());
 
     this.scene = new THREE.Scene();
@@ -60,6 +70,20 @@ export default class Scene {
       })
     );
     this.scene.add(this.mesh);
+
+    const light = new THREE.AmbientLight({ color: 0x404040, intensity: 32 });
+    this.scene.add(light);
+
+    if (model) {
+      const loader = new GLTFLoader();
+      loader.load(model, (gltf) => {
+        this.mesh = gltf.scene;
+        this.scene.add(this.mesh);
+        this.mesh.position.set(...position);
+        this.mesh.scale.set(...scale);
+        this.mesh.rotation.set(...rotation);
+      });
+    }
 
     this.renderTargetParameters = {
       minFilter: THREE.LinearFilter,
