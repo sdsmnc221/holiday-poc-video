@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { gsap } from "gsap";
 import DISP_1 from "./assets/disp3.jpeg";
 import SNOWGLOBE from "./assets/snowglobe.glb?url";
-import BEAR from "./assets/bear.glb?url";
+import LV from "./assets/lv.glb?url";
 import Scene from "./Scene";
 import Transition from "./Transition";
 
@@ -43,20 +43,24 @@ export let init = async ({ renderer, scene, width, height }) => {
   scene1 = new Scene(
     renderer,
     {
-      src: BEAR,
-      position: [0, -64, 480],
-      scale: [1, 1, 1],
-      rotation: [0, Math.PI, 0],
+      src: LV,
+      position: [0, 4, 640],
+      scale: [96, 96, 96],
+      rotation: [0, 0, 0],
     },
     width,
-    height
+    height,
+    {
+      sceneBackground: new THREE.Color(0x735d78),
+      plane: new THREE.Color(0xb392ac),
+    }
   );
 
   transition = new Transition(renderer, disp, width, height, scene0, scene1);
 
   const btn = document.createElement("button");
   btn.innerHTML = "Inside Out";
-  btn.style = `position: fixed; top: 0; left: 0; z-index: 9999; padding: 32px;`;
+  btn.style = `position: fixed; top: 0; left: 0; z-index: 9999; padding: 32px; cursor: pointer;`;
   btn.addEventListener("click", () => {
     console.log(scene0.camera);
     gsap
@@ -80,7 +84,7 @@ export let init = async ({ renderer, scene, width, height }) => {
       .to(
         scene0.camera.position,
         {
-          y: -72,
+          y: 64,
           z: 32,
           duration: 32,
           ease: "power4.out",

@@ -8,12 +8,16 @@ export default class Scene {
     model,
     width,
     height,
-    sceneBackground = new THREE.Color(0x03045e)
+    colors = {
+      sceneBackground: new THREE.Color(0x03045e),
+      plane: new THREE.Color(0x023e8a),
+    }
   ) {
     this.width = width;
     this.height = height;
+    this.colors = colors;
 
-    this.init(renderer, sceneBackground);
+    this.init(renderer);
 
     this.initLights();
 
@@ -22,7 +26,7 @@ export default class Scene {
     this.initDecors();
   }
 
-  init(renderer, sceneBackground) {
+  init(renderer) {
     this.renderer = renderer;
 
     this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.1, 1000);
@@ -39,7 +43,7 @@ export default class Scene {
     this.controls.update();
 
     this.scene = new THREE.Scene();
-    this.scene.background = sceneBackground;
+    this.scene.background = this.colors.sceneBackground;
 
     this.renderTargetParameters = {
       minFilter: THREE.LinearFilter,
@@ -100,7 +104,7 @@ export default class Scene {
   initDecors() {
     this.ground = new THREE.Mesh(
       new THREE.PlaneGeometry(this.width, this.height),
-      new THREE.MeshStandardMaterial({ color: 0x023e8a })
+      new THREE.MeshStandardMaterial({ color: this.colors.plane })
     );
     this.ground.rotation.x = -Math.PI * 0.48;
     this.ground.position.set(0, -16, 640);
