@@ -19,6 +19,7 @@ export let init = async ({ renderer, scene, width, height }) => {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.shadowMap.renderSingleSided = false;
+  renderer.shadowMap.renderReverseSided = true;
 
   app = document.querySelector("#app");
 

@@ -26,9 +26,11 @@ export default class Scene {
     this.renderer = renderer;
 
     this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.1, 1000);
-    this.camera.castShadow = true;
     this.camera.position.z = 740;
     this.camera.position.y = 8;
+    this.camera.lookAt(new THREE.Vector3());
+    this.camera.receiveShadow = true;
+    this.camera.castShadow = true;
 
     this.controls = new OrbitControls(
       this.camera,
@@ -53,20 +55,26 @@ export default class Scene {
   }
 
   initLights() {
-    const light = new THREE.AmbientLight({ color: 0x83c5be, intensity: 0.1 });
-    this.scene.add(light);
+    const ambientLight = new THREE.AmbientLight({
+      color: 0x83c5be,
+      intensity: 0.1,
+    });
+    this.scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0x83c5be, 4.8, 320);
+    const pointLight = new THREE.PointLight(0x83c5be, 1.6, 640);
     pointLight.position.set(64, 120, 640);
     pointLight.castShadow = true;
+    pointLight.shadow.bias = -0.0032;
+    pointLight.shadow.radius = 16;
+    pointLight.shadow.mapSize.set(512, 512);
     this.scene.add(pointLight);
 
-    const directionalLight = new THREE.DirectionalLight(0x023e8a, 0.032);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.6);
+    directionalLight.position.set(64, 120, 640);
     directionalLight.castShadow = true;
-    directionalLight.shadow.mapSize.width = 32;
-    directionalLight.shadow.mapSize.height = 32;
-    directionalLight.shadow.camera.near = 0.1;
-    directionalLight.shadow.camera.far = 100;
+    directionalLight.shadow.bias = -0.001;
+    directionalLight.shadow.radius = 3.2;
+    directionalLight.shadow.mapSize.set(512, 512);
     this.scene.add(directionalLight);
   }
 
@@ -99,12 +107,13 @@ export default class Scene {
     this.ground.scale.set(320, 120, 320);
     this.ground.receiveShadow = true;
     this.ground.castShadow = true;
+
     this.scene.add(this.ground);
   }
 
   render(rtt) {
     if (this.controls) this.controls.update();
-    // if (this.mesh) this.mesh.rotation.y -= 0.012;
+    if (this.mesh) this.mesh.rotation.y -= 0.012;
     if (rtt) {
       this.renderer.setRenderTarget(this.fbo);
       this.renderer.clear();
