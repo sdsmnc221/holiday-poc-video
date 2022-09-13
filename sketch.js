@@ -1,8 +1,5 @@
 import * as THREE from "three";
-import * as load from "load-asset";
 import { gsap } from "gsap";
-import VID_0 from "./assets/xp-0.mp4";
-import VID_1 from "./assets/xp-1.mp4";
 import DISP_1 from "./assets/disp3.jpeg";
 import SNOWGLOBE from "./assets/snowglobe.glb?url";
 import BEAR from "./assets/bear.glb?url";
@@ -11,8 +8,7 @@ import Transition from "./Transition";
 
 let camera;
 
-let video0, video1;
-let text0, text1, disp;
+let disp;
 let scene0, scene1;
 let transition;
 let app;
@@ -20,6 +16,10 @@ let doTransition = false,
   transitionDone = false;
 
 export let init = async ({ renderer, scene, width, height }) => {
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.renderSingleSided = false;
+
   app = document.querySelector("#app");
 
   camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.1, 1000);
@@ -28,77 +28,67 @@ export let init = async ({ renderer, scene, width, height }) => {
 
   disp = new THREE.TextureLoader().load(DISP_1);
 
-  video0 = await load(VID_0);
-  video1 = await load(VID_1);
-  app.appendChild(video0);
-  app.appendChild(video1);
-  video0.autoplay = true;
-  video0.loop = true;
-  video0.muted = true;
-  video0.playsinline = true;
-  video0.style = "display: none";
-  video0.play();
-  video1.autoplay = true;
-  video1.loop = true;
-  video1.muted = true;
-  video1.playsinline = true;
-  video1.style = "display: none;";
-  video1.play();
-
-  text0 = new THREE.VideoTexture(video0);
-  text0.needsUpdate = true;
-  text1 = new THREE.VideoTexture(video1);
-  text1.needsUpdate = true;
-
   scene0 = new Scene(
     renderer,
-    text0,
-    SNOWGLOBE,
+    {
+      src: SNOWGLOBE,
+      position: [0, -4, 640],
+      scale: [240, 240, 240],
+      rotation: [0, 0, 0],
+    },
     width,
-    height,
-    [0, 0, 640],
-    [240, 240, 240],
-    [0, 0, 0]
+    height
   );
   scene1 = new Scene(
     renderer,
-    text1,
-    BEAR,
+    {
+      src: BEAR,
+      position: [0, -64, 480],
+      scale: [1, 1, 1],
+      rotation: [0, Math.PI, 0],
+    },
     width,
-    height,
-    [0, -64, 480],
-    [1, 1, 1],
-    [0, Math.PI, 0]
+    height
   );
 
   transition = new Transition(renderer, disp, width, height, scene0, scene1);
 
   const btn = document.createElement("button");
   btn.innerHTML = "Inside Out";
-  btn.style = `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 999`;
-  app.appendChild(btn);
+  btn.style = `position: fixed; top: 0; left: 0; z-index: 9999; padding: 32px;`;
   btn.addEventListener("click", () => {
-    gsap.to(scene0.camera.position, {
-      z: 320,
-      duration: 12,
-      ease: "power4.out",
-      onComplete: () => {
-        doTransition = false;
-        transitionDone = true;
-      },
-      onUpdate: () => {
-        const frustum = new THREE.Frustum();
-        const matrix = new THREE.Matrix4().multiplyMatrices(
-          scene0.camera.projectionMatrix,
-          scene0.camera.matrixWorldInverse
-        );
-        frustum.setFromProjectionMatrix(matrix);
-        if (!frustum.containsPoint(scene0.mesh.position)) {
-          doTransition = true;
-        }
-      },
-    });
+    console.log(scene0.camera);
+    gsap
+      .timeline({
+        onComplete: () => {
+          doTransition = false;
+          transitionDone = true;
+        },
+        onUpdate: () => {
+          const frustum = new THREE.Frustum();
+          const matrix = new THREE.Matrix4().multiplyMatrices(
+            scene0.camera.projectionMatrix,
+            scene0.camera.matrixWorldInverse
+          );
+          frustum.setFromProjectionMatrix(matrix);
+          if (!frustum.containsPoint(scene0.mesh.position)) {
+            doTransition = true;
+          }
+        },
+      })
+      .to(
+        scene0.camera.position,
+        {
+          y: -72,
+          z: 32,
+          duration: 32,
+          ease: "power4.out",
+        },
+        "<"
+      )
+      .play();
   });
+  app.appendChild(btn);
 };
 
 export let update = ({ renderer, scene, time, deltaTime }) => {
